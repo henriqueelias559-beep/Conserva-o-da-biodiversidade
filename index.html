@@ -1,0 +1,687 @@
+<title>Raiz Viva</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,300..600&family=Instrument+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Layout: cinematic parallax forest hero, then alternating sand and forest bands; one illustrated scene system reused for slides and cards. */
+:root{
+  --forest:#12301f; --deep:#0b2015; --moss:#2c5b3a; --leaf:#5f9e63; --sage:#d2e1c6;
+  --sand:#f2ebdb; --paper:#fbf8f0; --clay:#b4673a; --bark:#5a4330; --ink:#18281d; --muted:#56655a;
+  --line:rgba(24,40,29,.14);
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --body:"Instrument Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  color-scheme:light;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{margin:0;background:var(--paper);color:var(--ink);font:400 17px/1.65 var(--body);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img,svg{max-width:100%}
+a{color:inherit}
+.wrap{width:100%;max-width:1180px;margin-inline:auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+h1,h2,h3{font-family:var(--display);font-weight:500;line-height:1.08;margin:0;text-wrap:balance;letter-spacing:-.01em}
+h2{font-size:clamp(2rem,4.6vw,3.4rem)}
+h3{font-size:1.35rem}
+p{margin:0}
+.eyebrow{font:600 .74rem/1 var(--body);letter-spacing:.2em;text-transform:uppercase;color:var(--moss);display:block;margin-bottom:18px}
+.dark .eyebrow{color:var(--leaf)}
+:focus-visible{outline:3px solid var(--clay);outline-offset:3px;border-radius:6px}
+
+/* progress + nav */
+#progress{position:fixed;top:0;left:0;height:4px;width:100%;transform-origin:0 50%;transform:scaleX(0);background:linear-gradient(90deg,var(--leaf),var(--clay));z-index:60}
+nav.top{position:fixed;inset:0 0 auto 0;z-index:50;padding:calc(14px + env(safe-area-inset-top,0px)) max(20px,env(safe-area-inset-right,0px)) 14px max(20px,env(safe-area-inset-left,0px));transition:background .4s,box-shadow .4s,padding .3s;color:#fff}
+nav.top.solid{background:rgba(251,248,240,.93);backdrop-filter:blur(10px);color:var(--ink);box-shadow:0 1px 0 var(--line)}
+nav.top .in{max-width:1180px;margin:auto;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font:600 1.25rem var(--display)}
+.brand svg{width:30px;height:30px}
+.links{display:flex;gap:26px;list-style:none;margin:0;padding:0}
+.links a{text-decoration:none;font-size:.93rem;font-weight:500;position:relative;padding:6px 0;opacity:.9}
+.links a::after{content:"";position:absolute;left:0;bottom:0;height:2px;width:100%;background:currentColor;transform:scaleX(0);transform-origin:0 50%;transition:transform .35s}
+.links a:hover::after,.links a.on::after{transform:scaleX(1)}
+.burger{display:none;background:none;border:0;color:inherit;width:44px;height:44px;cursor:pointer}
+.burger span{display:block;width:24px;height:2px;background:currentColor;margin:5px auto;transition:.3s}
+@media(max-width:860px){
+  .burger{display:block}
+  .links{position:fixed;inset:0 0 0 auto;width:min(300px,80vw);background:var(--forest);color:#fff;flex-direction:column;padding:calc(90px + env(safe-area-inset-top,0px)) 32px 32px;transform:translateX(105%);transition:transform .4s;gap:18px}
+  .links a{font-size:1.25rem;font-family:var(--display)}
+  nav.open .links{transform:none}
+  nav.open{color:#fff}
+  nav.open .burger{position:relative;z-index:3}
+}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:12px;padding:16px 28px;border-radius:999px;border:0;background:var(--clay);color:#fff;font:600 1rem var(--body);text-decoration:none;cursor:pointer;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;box-shadow:0 10px 30px rgba(180,103,58,.35)}
+.btn::before{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.35) 50%,transparent 70%);transform:translateX(-120%);transition:transform .7s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 16px 38px rgba(180,103,58,.45)}
+.btn:hover::before{transform:translateX(120%)}
+.btn svg{width:18px;height:18px;transition:transform .3s}
+.btn:hover svg{transform:translateY(4px)}
+.btn.ghost{background:transparent;border:1.5px solid currentColor;box-shadow:none}
+
+/* hero */
+.hero{position:relative;min-height:100svh;overflow:hidden;background:linear-gradient(180deg,#0f2a2a 0%,#2d5b4f 28%,#d8b274 62%,#f0d9a6 100%);color:#fff;display:flex;align-items:center}
+.layer{position:absolute;inset:0;will-change:transform;pointer-events:none}
+.layer svg{position:absolute;left:0;bottom:0;width:100%;height:100%}
+.hero .shade{position:absolute;inset:0;background:radial-gradient(ellipse at 30% 45%,rgba(8,26,16,.62),transparent 65%),linear-gradient(180deg,rgba(8,26,16,.45),transparent 30%,rgba(8,26,16,.55));pointer-events:none}
+.hero .copy{position:relative;z-index:2;padding-block:140px 130px;max-width:780px}
+.hero h1{font-size:clamp(2.6rem,7.2vw,5.6rem);font-weight:400;margin-bottom:24px}
+.hero h1 em{font-style:italic;color:#f2c98b}
+.hero p.sub{font-size:clamp(1.05rem,1.8vw,1.3rem);max-width:600px;margin-bottom:38px;color:rgba(255,255,255,.9)}
+.hero .tag{display:inline-flex;gap:10px;align-items:center;padding:7px 16px;border:1px solid rgba(255,255,255,.4);border-radius:999px;font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;margin-bottom:28px;backdrop-filter:blur(6px);background:rgba(255,255,255,.08)}
+.birds{position:absolute;z-index:1;top:22%;left:-10%;width:130px;opacity:.8;animation:fly 38s linear infinite}
+.birds.b2{top:30%;width:80px;animation-duration:52s;animation-delay:-20s}
+@keyframes fly{to{transform:translateX(130vw) translateY(-60px)}}
+.scroll{position:absolute;z-index:3;left:50%;bottom:calc(26px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);display:flex;flex-direction:column;align-items:center;gap:10px;font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;text-decoration:none;color:#fff}
+.mouse{width:24px;height:40px;border:2px solid #fff;border-radius:14px;position:relative}
+.mouse::after{content:"";position:absolute;left:50%;top:7px;width:4px;height:8px;margin-left:-2px;border-radius:2px;background:#fff;animation:wheel 1.8s infinite}
+@keyframes wheel{0%{opacity:1;transform:translateY(0)}80%,100%{opacity:0;transform:translateY(14px)}}
+.hero .copy>*{opacity:0;transform:translateY(26px);animation:rise 1.1s cubic-bezier(.2,.7,.2,1) forwards}
+.hero .copy>*:nth-child(2){animation-delay:.2s}.hero .copy>*:nth-child(3){animation-delay:.4s}.hero .copy>*:nth-child(4){animation-delay:.6s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* sections */
+section{position:relative}
+.band{padding-block:clamp(72px,11vw,150px)}
+.dark{background:var(--forest);color:#eef3e8}
+.sand{background:var(--sand)}
+.head{max-width:760px;margin-bottom:56px}
+.head p{color:var(--muted);margin-top:18px;font-size:1.1rem}
+.dark .head p{color:#b9cbb6}
+
+/* reveal */
+.js .rv{opacity:0;transform:translateY(34px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1);transition-delay:var(--d,0s)}
+.js .rv.in{opacity:1;transform:none}
+
+/* slides */
+.slides{background:var(--deep);padding-block:0}
+.car{position:relative;height:min(82vh,700px);min-height:520px;overflow:hidden;color:#fff}
+.sl{position:absolute;inset:0;opacity:0;visibility:hidden;transition:opacity 1s ease,visibility 1s}
+.sl.on{opacity:1;visibility:visible}
+.sl>svg{position:absolute;inset:0;width:100%;height:100%;transform:scale(1.12);transition:transform 9s ease-out}
+.sl.on>svg{transform:scale(1)}
+.sl::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(6,20,12,.82),rgba(6,20,12,.15) 70%),linear-gradient(0deg,rgba(6,20,12,.6),transparent 40%)}
+.sl .txt{position:absolute;z-index:2;left:0;right:0;bottom:clamp(90px,14vh,140px)}
+.sl .txt .in{max-width:620px}
+.sl .txt>div>*{opacity:0;transform:translateX(-30px);transition:all .9s cubic-bezier(.2,.7,.2,1)}
+.sl.on .txt>div>*{opacity:1;transform:none}
+.sl.on .txt>div>*:nth-child(2){transition-delay:.15s}.sl.on .txt>div>*:nth-child(3){transition-delay:.3s}
+.sl h3{font-size:clamp(1.9rem,4.4vw,3.2rem);margin:10px 0 14px}
+.sl p{color:rgba(255,255,255,.88);font-size:1.08rem}
+.sl .k{font:600 .75rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:#f2c98b}
+.ctrl{position:absolute;z-index:5;left:0;right:0;bottom:calc(26px + env(safe-area-inset-bottom,0px));display:flex;align-items:center;justify-content:space-between}
+.dots{display:flex;gap:10px}
+.dots button{width:34px;height:5px;border-radius:3px;border:0;background:rgba(255,255,255,.35);cursor:pointer;padding:0;position:relative;overflow:hidden}
+.dots button.on::after{content:"";position:absolute;inset:0;background:#f2c98b;transform-origin:0 50%;animation:fill 7s linear forwards}
+.car.paused .dots button.on::after{animation-play-state:paused}
+@keyframes fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.arrows{display:flex;gap:10px}
+.arrows button{width:48px;height:48px;border-radius:50%;border:1.5px solid rgba(255,255,255,.6);background:rgba(255,255,255,.08);color:#fff;cursor:pointer;backdrop-filter:blur(6px);transition:.3s;display:grid;place-items:center}
+.arrows button:hover{background:#fff;color:var(--forest);transform:scale(1.08)}
+.count{position:absolute;z-index:3;right:max(20px,env(safe-area-inset-right,0px));top:100px;font:300 clamp(3rem,8vw,6rem)/1 var(--display);opacity:.35}
+
+/* web of life */
+.web{display:grid;grid-template-columns:1.05fr 1fr;gap:clamp(28px,5vw,72px);align-items:center}
+.big{font-size:1.14rem}
+.big p+p{margin-top:18px}
+.net{background:var(--forest);border-radius:28px;padding:18px;position:relative;box-shadow:0 30px 60px -30px rgba(18,48,31,.6)}
+.net svg{width:100%;height:auto;display:block}
+.net .node{cursor:pointer}
+.net .node circle{transition:r .3s,fill .3s}
+.net .node text{font:600 13px var(--body);fill:#eaf1e2;pointer-events:none}
+.net line{stroke:rgba(210,225,198,.25);stroke-width:1.5;transition:.3s}
+.net line.hot{stroke:#f2c98b;stroke-width:3}
+.net .node.hot circle{fill:#f2c98b}
+.net .node.hot text{fill:var(--deep)}
+.info{margin:16px 6px 6px;color:#d6e4cf;font-size:.98rem;min-height:130px}
+.info b{font-family:var(--display);font-size:1.3rem;color:#fff;font-weight:500;display:block;margin-bottom:6px}
+.info ul{margin:0;padding-left:18px}
+.info li{margin:4px 0}
+.hint{font-size:.82rem;color:#9fb79d;margin:4px 6px 0}
+@media(max-width:900px){.web{grid-template-columns:1fr}}
+
+/* threat cards */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,330px),1fr));gap:26px}
+.card{background:#fff;border-radius:22px;overflow:hidden;box-shadow:0 1px 0 var(--line),0 18px 40px -26px rgba(18,48,31,.5);transition:transform .5s cubic-bezier(.2,.7,.2,1),box-shadow .5s;display:flex;flex-direction:column;min-width:0}
+.card:hover,.card:focus-within{transform:translateY(-10px) rotate(-.4deg);box-shadow:0 30px 60px -24px rgba(18,48,31,.55)}
+.card .pic{aspect-ratio:16/10;position:relative;overflow:hidden;background:var(--forest)}
+.card .pic svg{position:absolute;inset:0;width:100%;height:100%;transition:transform 1.2s cubic-bezier(.2,.7,.2,1)}
+.card:hover .pic svg{transform:scale(1.12)}
+.card .ic{position:absolute;left:18px;bottom:16px;width:48px;height:48px;border-radius:14px;background:rgba(251,248,240,.95);display:grid;place-items:center;color:var(--forest);transition:transform .4s,background .4s,color .4s}
+.card:hover .ic{transform:rotate(-8deg) scale(1.08);background:var(--clay);color:#fff}
+.ic svg{width:26px;height:26px;position:static!important;inset:auto;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.card .bd{padding:24px 24px 26px;display:flex;flex-direction:column;gap:10px;flex:1}
+.card p{color:var(--muted);font-size:.98rem}
+.card .stat{margin-top:auto;padding-top:14px;border-top:1px dashed var(--line);font-size:.84rem;color:var(--moss);font-weight:500;max-height:2.7em;overflow:hidden;transition:max-height .5s,color .3s}
+.card:hover .stat{color:var(--clay);max-height:6em}
+
+/* help */
+.tips{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:16px}
+.tip{background:rgba(255,255,255,.06);border:1px solid rgba(210,225,198,.2);border-radius:20px;padding:24px;cursor:pointer;text-align:left;color:inherit;font:inherit;transition:.35s;position:relative;display:flex;flex-direction:column;gap:12px}
+.tip:hover{background:rgba(255,255,255,.12);transform:translateY(-6px)}
+.tip svg{width:34px;height:34px;fill:none;stroke:var(--leaf);stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:.35s}
+.tip h3{font-size:1.2rem}
+.tip p{font-size:.93rem;color:#b9cbb6}
+.tip .chk{position:absolute;top:18px;right:18px;width:24px;height:24px;border-radius:50%;border:1.5px solid rgba(210,225,198,.5);display:grid;place-items:center;transition:.3s}
+.tip .chk::after{content:"";width:10px;height:6px;border-left:2px solid var(--deep);border-bottom:2px solid var(--deep);transform:rotate(-45deg) scale(0);margin-top:-2px;transition:.3s}
+.tip[aria-pressed="true"]{background:rgba(95,158,99,.28);border-color:var(--leaf)}
+.tip[aria-pressed="true"] .chk{background:#f2c98b;border-color:#f2c98b}
+.tip[aria-pressed="true"] .chk::after{transform:rotate(-45deg) scale(1)}
+.tip[aria-pressed="true"] svg{stroke:#f2c98b;transform:scale(1.1) rotate(-5deg)}
+.pledge{margin-top:48px;display:grid;grid-template-columns:auto 1fr;gap:36px;align-items:center;background:rgba(0,0,0,.22);border-radius:26px;padding:28px 32px}
+.pledge svg{width:170px;height:170px;overflow:visible}
+.pledge .tree{transform-origin:85px 160px;transition:transform 1s cubic-bezier(.3,1.4,.4,1)}
+.pledge h3{font-size:1.7rem;margin-bottom:8px}
+.pledge p{color:#c9d9c3}
+@media(max-width:620px){.pledge{grid-template-columns:1fr;text-align:center;justify-items:center}}
+
+/* data */
+.nums{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:18px;margin-bottom:56px}
+.num{background:#fff;border-radius:20px;padding:26px;box-shadow:0 1px 0 var(--line)}
+.num .v{font:500 clamp(2.4rem,5vw,3.6rem)/1 var(--display);color:var(--forest);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+.num .v small{font-size:.5em;color:var(--moss)}
+.num p{margin-top:10px;font-size:.95rem;color:var(--muted)}
+.src{display:block;margin-top:12px;font-size:.76rem;color:var(--clay);font-weight:600;letter-spacing:.03em}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr));gap:22px}
+.chart{background:#fff;border-radius:22px;padding:28px;box-shadow:0 1px 0 var(--line);min-width:0}
+.chart h3{font-size:1.25rem;margin-bottom:4px}
+.chart .cap{font-size:.84rem;color:var(--muted);margin-bottom:22px}
+.bar{display:grid;grid-template-columns:minmax(92px,26%) 1fr;align-items:center;gap:12px;margin:12px 0}
+.bar .nm{font-size:.9rem;font-weight:500;overflow-wrap:anywhere}
+.bar .tr{height:34px;background:var(--sand);border-radius:6px;position:relative;overflow:hidden}
+.bar .fl{position:absolute;inset:0 auto 0 0;width:0;border-radius:0 6px 6px 0;background:var(--moss);transition:width 1.4s cubic-bezier(.2,.7,.2,1);display:flex;align-items:center;justify-content:flex-end;padding-right:10px;color:#fff;font:600 .85rem var(--body);font-variant-numeric:tabular-nums;min-width:56px}
+.bar.hl .fl{background:var(--clay)}
+.bar .fl.low{background:var(--leaf)}
+.bar:hover .tr{outline:2px solid var(--leaf)}
+.foot-note{margin-top:14px;font-size:.78rem;color:var(--muted)}
+.facts{margin-top:48px;display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr));gap:18px}
+.fact{border-left:3px solid var(--clay);padding:4px 0 4px 20px}
+.fact b{font-family:var(--display);font-weight:500;font-size:1.25rem;display:block;margin-bottom:4px}
+.fact span{font-size:.93rem;color:var(--muted)}
+
+/* quote */
+.quote{min-height:90vh;display:flex;align-items:center;color:#fff;overflow:hidden;background:#1d1a33}
+.quote .bg{position:absolute;inset:-8% 0 0}
+.quote .bg svg{width:100%;height:100%;display:block}
+.quote::after{content:"";position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,rgba(9,20,16,.65),rgba(9,20,16,.35) 60%,rgba(9,20,16,.7))}
+.quote .wrap{position:relative;z-index:2;padding-block:110px;text-align:center}
+.quote blockquote{margin:0 auto 38px;max-width:900px;font:300 clamp(1.8rem,4.6vw,3.6rem)/1.2 var(--display);font-style:italic;text-wrap:balance}
+.quote blockquote::before{content:"“";display:block;font-size:2.4em;line-height:.6;color:#f2c98b;margin-bottom:14px}
+.quote .refl{max-width:660px;margin:0 auto;color:rgba(255,255,255,.88);font-size:1.1rem}
+.quote .refl p+p{margin-top:14px}
+
+/* footer */
+footer{background:var(--deep);color:#b9cbb6;padding-block:80px 40px;font-size:.93rem}
+.fg{display:grid;grid-template-columns:1.4fr 1fr 1.6fr;gap:48px}
+footer h4{font:600 .74rem var(--body);letter-spacing:.2em;text-transform:uppercase;color:#f2c98b;margin:0 0 18px}
+footer .brand{color:#fff;margin-bottom:16px}
+footer ul{list-style:none;padding:0;margin:0;display:grid;gap:10px}
+footer a{text-decoration:none;transition:color .2s}
+footer a:hover{color:#fff;text-decoration:underline}
+footer .srcs a{display:block;overflow-wrap:anywhere}
+.slogan{font:italic 400 1.3rem/1.35 var(--display);color:#eaf1e2;margin-bottom:12px}
+.legal{margin-top:56px;padding-top:24px;border-top:1px solid rgba(210,225,198,.18);display:flex;flex-wrap:wrap;gap:12px 32px;justify-content:space-between;font-size:.82rem}
+@media(max-width:860px){.fg{grid-template-columns:1fr;gap:36px}}
+
+#top{position:fixed;right:max(18px,calc(env(safe-area-inset-right,0px) + 12px));bottom:calc(18px + env(safe-area-inset-bottom,0px));width:52px;height:52px;border-radius:50%;border:0;background:var(--clay);color:#fff;cursor:pointer;z-index:40;display:grid;place-items:center;box-shadow:0 10px 26px rgba(0,0,0,.3);opacity:0;transform:translateY(20px) scale(.8);pointer-events:none;transition:.4s}
+#top.show{opacity:1;transform:none;pointer-events:auto}
+#top:hover{transform:translateY(-4px);background:var(--forest)}
+#top svg{width:22px;height:22px}
+
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+
+<div id="progress"></div>
+
+<nav class="top" id="nav">
+  <div class="in">
+    <a class="brand" href="#inicio" aria-label="Raiz Viva, início">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29V13"/><path d="M16 17C9 17 5 12 5 5c7 0 11 4 11 12Z"/><path d="M16 21c5 0 9-3.5 9-9-5 0-9 3-9 9Z"/></svg>
+      Raiz Viva
+    </a>
+    <button class="burger" id="burger" aria-label="Abrir menu" aria-expanded="false"><span></span><span></span></button>
+    <ul class="links" id="links">
+      <li><a href="#inicio">Início</a></li>
+      <li><a href="#biodiversidade">Biodiversidade</a></li>
+      <li><a href="#ameacas">Ameaças</a></li>
+      <li><a href="#ajudar">Como ajudar</a></li>
+      <li><a href="#dados">Dados</a></li>
+      <li><a href="#mensagem">Mensagem</a></li>
+    </ul>
+  </div>
+</nav>
+
+<header class="hero" id="inicio">
+  <div class="layer" data-s=".08" id="hl0"></div>
+  <div class="layer" data-s=".18" id="hl1"></div>
+  <div class="layer" data-s=".3" id="hl2"></div>
+  <svg class="birds" viewBox="0 0 130 40" fill="none" stroke="#10241a" stroke-width="2.2" stroke-linecap="round"><path d="M4 22q9-12 18 0q9-12 18 0"/><path d="M62 10q7-9 14 0q7-9 14 0"/><path d="M92 30q6-8 12 0q6-8 12 0"/></svg>
+  <svg class="birds b2" viewBox="0 0 130 40" fill="none" stroke="#10241a" stroke-width="2.6" stroke-linecap="round"><path d="M4 22q9-12 18 0q9-12 18 0"/><path d="M62 10q7-9 14 0q7-9 14 0"/></svg>
+  <div class="layer" data-s=".5" id="hl3"></div>
+  <div class="shade"></div>
+  <div class="wrap">
+    <div class="copy">
+      <span class="tag">Conservação da biodiversidade</span>
+      <h1>A biodiversidade é a <em>riqueza da vida</em> na Terra</h1>
+      <p class="sub">Cada árvore, cada rio, cada inseto e cada canto de ave sustenta uma teia que também sustenta você. Proteger a natureza é preservar a vida, a de hoje e a de quem ainda vai chegar.</p>
+      <a class="btn" href="#biodiversidade">Descubra como preservar
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M6 13l6 6 6-6"/></svg>
+      </a>
+    </div>
+  </div>
+  <a class="scroll" href="#slides" aria-label="Role para ver mais"><span class="mouse"></span>Role</a>
+</header>
+
+<section class="slides" id="slides" aria-label="Histórias da biodiversidade">
+  <div class="car" id="car" tabindex="0" aria-roledescription="carrossel">
+    <div class="count" id="cnt">01</div>
+    <div class="ctrl"><div class="wrap" style="display:flex;justify-content:space-between;align-items:center;width:100%">
+      <div class="dots" id="dots"></div>
+      <div class="arrows">
+        <button id="prev" aria-label="Slide anterior"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+        <button id="next" aria-label="Próximo slide"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<section class="band" id="biodiversidade">
+  <div class="wrap web">
+    <div class="rv">
+      <span class="eyebrow">O que é biodiversidade?</span>
+      <h2>Uma teia em que ninguém vive sozinho</h2>
+      <div class="big" style="margin-top:26px">
+        <p>Biodiversidade é a variedade de toda a vida: animais, plantas, fungos, microrganismos e os lugares onde eles vivem, de uma poça de maré até uma floresta inteira.</p>
+        <p>Nessa teia, tudo depende de tudo. O fungo alimenta a raiz, o inseto leva o pólen, a ave espalha a semente, a árvore segura o rio. E nós comemos, bebemos e respiramos graças a esse trabalho silencioso.</p>
+        <p>Quando uma peça some, as outras sentem. Toque nos pontos ao lado e veja quem depende de quem.</p>
+      </div>
+    </div>
+    <div class="net rv" style="--d:.15s">
+      <svg id="netsvg" viewBox="0 0 520 440" role="img" aria-label="Rede de relações entre árvores, fungos, insetos, aves, mamíferos, rios e pessoas"></svg>
+      <div class="info" id="netinfo" aria-live="polite"></div>
+      <p class="hint">Toque ou passe o mouse sobre um ponto.</p>
+    </div>
+  </div>
+</section>
+
+<section class="band sand" id="ameacas">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Principais ameaças</span>
+      <h2>O que está desfazendo a teia</h2>
+      <p>O painel intergovernamental IPBES aponta cinco causas diretas da perda de natureza: mudanças no uso da terra e do mar, exploração direta de organismos, mudanças climáticas, poluição e espécies invasoras. Estas são as que mais aparecem no nosso dia a dia.</p>
+    </div>
+    <div class="grid" id="cards"></div>
+  </div>
+</section>
+
+<section class="band dark" id="ajudar">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Como podemos ajudar?</span>
+      <h2>Pequenos gestos, uma floresta inteira</h2>
+      <p>Ninguém precisa fazer tudo, mas todo mundo pode fazer alguma coisa. Marque o que você se compromete a fazer e veja a árvore crescer.</p>
+    </div>
+    <div class="tips" id="tips"></div>
+    <div class="pledge rv">
+      <svg viewBox="0 0 170 170" aria-hidden="true">
+        <ellipse cx="85" cy="162" rx="60" ry="7" fill="rgba(0,0,0,.3)"/>
+        <g class="tree" id="ptree" style="transform:scale(.18)">
+          <rect x="80" y="90" width="10" height="72" rx="4" fill="#8a6446"/>
+          <path d="M85 120 L62 96" stroke="#8a6446" stroke-width="5" stroke-linecap="round"/>
+          <path d="M85 108 L110 86" stroke="#8a6446" stroke-width="5" stroke-linecap="round"/>
+          <circle cx="85" cy="62" r="44" fill="#4f8d58"/>
+          <circle cx="54" cy="86" r="28" fill="#5f9e63"/>
+          <circle cx="116" cy="84" r="30" fill="#5f9e63"/>
+          <circle cx="70" cy="48" r="22" fill="#78b377"/>
+          <circle cx="104" cy="52" r="18" fill="#78b377"/>
+        </g>
+      </svg>
+      <div>
+        <h3 id="pt">Plante a primeira decisão</h3>
+        <p id="pp">Escolha um gesto acima. Mesmo um já faz diferença quando muita gente faz junto.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band" id="dados">
+  <div class="wrap">
+    <div class="head rv">
+      <span class="eyebrow">Dados e curiosidades</span>
+      <h2>Os números por trás da urgência</h2>
+      <p>Todas as informações vêm de relatórios científicos e institucionais. Cada dado traz o ano a que se refere e a fonte, listada no fim da página.</p>
+    </div>
+    <div class="nums">
+      <div class="num rv"><div class="v"><span data-count="73">0</span><small>%</small></div><p>de queda média nas populações monitoradas de vertebrados entre 1970 e 2020.</p><span class="src">WWF / ZSL · Relatório Planeta Vivo, 2024</span></div>
+      <div class="num rv" style="--d:.1s"><div class="v"><span data-count="1" data-dec="0">0</span><small> milhão</small></div><p>de espécies animais e vegetais ameaçadas de extinção, entre cerca de 8 milhões estimadas.</p><span class="src">IPBES · Avaliação Global, 2019</span></div>
+      <div class="num rv" style="--d:.2s"><div class="v"><span data-count="48646" data-sep="1">0</span></div><p>espécies ameaçadas entre 172.620 avaliadas na Lista Vermelha da IUCN.</p><span class="src">IUCN · Lista Vermelha, out. 2025</span></div>
+      <div class="num rv" style="--d:.3s"><div class="v"><span data-count="2698" data-sep="1">0</span><small> ha/dia</small></div><p>de vegetação nativa desmatada no Brasil em 2025, queda de 20,6% sobre 2024.</p><span class="src">MapBiomas · RAD 2025 (publicado em 2026)</span></div>
+    </div>
+
+    <div class="charts">
+      <div class="chart rv">
+        <h3>Queda das populações de vida selvagem</h3>
+        <p class="cap">Variação média, 1970 a 2020, por ambiente · Índice Planeta Vivo, 2024</p>
+        <div class="bars" data-max="100">
+          <div class="bar hl"><span class="nm">Água doce</span><div class="tr"><div class="fl" data-w="85">−85%</div></div></div>
+          <div class="bar"><span class="nm">Terrestre</span><div class="tr"><div class="fl" data-w="69">−69%</div></div></div>
+          <div class="bar"><span class="nm">Marinho</span><div class="tr"><div class="fl" data-w="56">−56%</div></div></div>
+        </div>
+        <p class="foot-note">Fonte: WWF e Sociedade Zoológica de Londres, 2024. Quase 35 mil populações de 5.495 espécies.</p>
+      </div>
+      <div class="chart rv" style="--d:.1s">
+        <h3>Onde a queda foi maior</h3>
+        <p class="cap">Variação média, 1970 a 2020, por região · Índice Planeta Vivo, 2024</p>
+        <div class="bars">
+          <div class="bar hl"><span class="nm">América Latina e Caribe</span><div class="tr"><div class="fl" data-w="95">−95%</div></div></div>
+          <div class="bar"><span class="nm">África</span><div class="tr"><div class="fl" data-w="76">−76%</div></div></div>
+          <div class="bar"><span class="nm">Ásia-Pacífico</span><div class="tr"><div class="fl" data-w="60">−60%</div></div></div>
+          <div class="bar"><span class="nm">América do Norte</span><div class="tr"><div class="fl" data-w="39">−39%</div></div></div>
+          <div class="bar"><span class="nm">Europa e Ásia Central</span><div class="tr"><div class="fl" data-w="35">−35%</div></div></div>
+        </div>
+        <p class="foot-note">Fonte: WWF, 2024.</p>
+      </div>
+      <div class="chart rv">
+        <h3>O desmatamento global está desacelerando</h3>
+        <p class="cap">Milhões de hectares desmatados por ano · FAO, 2025</p>
+        <div class="bars">
+          <div class="bar"><span class="nm">1990 a 2000</span><div class="tr"><div class="fl" data-w="17.6" data-max="18" data-t="17,6">17,6</div></div></div>
+          <div class="bar"><span class="nm">2000 a 2015</span><div class="tr"><div class="fl" data-w="13.6" data-max="18" data-t="13,6">13,6</div></div></div>
+          <div class="bar"><span class="nm">2015 a 2025</span><div class="tr"><div class="fl low" data-w="10.9" data-max="18">10,9</div></div></div>
+        </div>
+        <p class="foot-note">Ainda são cerca de 10,9 milhões de hectares por ano. Florestas cobrem 4,14 bilhões de hectares, 32% das terras do planeta. Fonte: FAO, Avaliação Global dos Recursos Florestais 2025.</p>
+      </div>
+      <div class="chart rv" style="--d:.1s">
+        <h3>Brasil: onde se desmatou em 2025</h3>
+        <p class="cap">Hectares de vegetação nativa · MapBiomas, RAD 2025</p>
+        <div class="bars">
+          <div class="bar hl"><span class="nm">Cerrado</span><div class="tr"><div class="fl" data-w="540614" data-max="540614">540.614</div></div></div>
+          <div class="bar"><span class="nm">Amazônia</span><div class="tr"><div class="fl" data-w="289478" data-max="540614">289.478</div></div></div>
+          <div class="bar"><span class="nm">Demais biomas*</span><div class="tr"><div class="fl low" data-w="154702" data-max="540614">154.702</div></div></div>
+        </div>
+        <p class="foot-note">Total: 984.794 ha, queda de 20,6% sobre 2024. A Amazônia teve queda de 23,5%. *Diferença calculada entre o total nacional e a soma dos dois biomas. Mais de 97% da perda nos últimos sete anos veio da expansão agropecuária.</p>
+      </div>
+    </div>
+
+    <div class="facts">
+      <div class="fact rv"><b>61% das aves estão em declínio</b><span>Em 2025, 1.256 das 11.185 espécies de aves (11,5%) estavam ameaçadas. Em 2016, eram 44% com populações em queda. · IUCN / BirdLife, 2025</span></div>
+      <div class="fact rv" style="--d:.1s"><b>Anfíbios e corais na linha de frente</b><span>Mais de 40% das espécies de anfíbios e quase 33% dos corais formadores de recifes estão ameaçados. · IPBES, 2019</span></div>
+      <div class="fact rv" style="--d:.2s"><b>Plástico multiplicado por dez</b><span>A poluição por plástico aumentou dez vezes desde 1980, e 300 a 400 milhões de toneladas de resíduos industriais vão para as águas por ano. · IPBES, 2019</span></div>
+      <div class="fact rv"><b>Quase 680 vertebrados já se foram</b><span>Pelo menos 680 espécies de vertebrados foram extintas desde o século XVI. · IPBES, 2019</span></div>
+      <div class="fact rv" style="--d:.1s"><b>Brasil perdeu 14% da vegetação nativa</b><span>A cobertura natural caiu de 79% para 65% do território entre 1985 e 2025, enquanto a agropecuária subiu de 18% para 32%. · MapBiomas, 2026</span></div>
+      <div class="fact rv" style="--d:.2s"><b>Existem boas notícias</b><span>Gorilas-da-montanha em Virunga cresceram cerca de 3% ao ano (2010 a 2016) e o bisão-europeu voltou a ter 6.800 indivíduos na Europa Central. · WWF, 2024</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="quote" id="mensagem">
+  <div class="bg" id="qbg"></div>
+  <div class="wrap">
+    <blockquote class="rv">Não herdamos a Terra dos nossos antepassados, nós a recebemos emprestada das futuras gerações.</blockquote>
+    <div class="refl rv" style="--d:.2s">
+      <p>Cada escolha conta: o que compramos, o que jogamos fora, a água que usamos, a árvore que deixamos de pé. Nenhuma lei, nenhum relatório e nenhuma ONG substituem o gesto de quem decide cuidar.</p>
+      <p>A natureza não pede perfeição. Pede presença. Comece hoje, aí onde você está, e convide alguém para ir junto.</p>
+      <p style="margin-top:34px"><a class="btn" href="#ajudar">Escolher meu compromisso</a></p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="fg">
+      <div>
+        <a class="brand" href="#inicio"><svg viewBox="0 0 32 32" width="30" height="30" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 29V13"/><path d="M16 17C9 17 5 12 5 5c7 0 11 4 11 12Z"/><path d="M16 21c5 0 9-3.5 9-9-5 0-9 3-9 9Z"/></svg>Raiz Viva</a>
+        <p class="slogan">Proteger a natureza é preservar a vida.</p>
+        <p>Um projeto educativo sobre a conservação da biodiversidade.</p>
+      </div>
+      <div>
+        <h4>Navegue</h4>
+        <ul>
+          <li><a href="#inicio">Início</a></li>
+          <li><a href="#biodiversidade">O que é biodiversidade</a></li>
+          <li><a href="#ameacas">Principais ameaças</a></li>
+          <li><a href="#ajudar">Como ajudar</a></li>
+          <li><a href="#dados">Dados e curiosidades</a></li>
+          <li><a href="#mensagem">Mensagem</a></li>
+        </ul>
+      </div>
+      <div class="srcs">
+        <h4>Fontes de pesquisa</h4>
+        <ul>
+          <li><a href="https://www.worldwildlife.org/news/press-releases/catastrophic-73-decline-in-the-average-size-of-global-wildlife-populations-in-just-50-years-reveals-a-system-in-peril/" target="_blank" rel="noopener">WWF e ZSL, Relatório Planeta Vivo 2024</a></li>
+          <li><a href="https://www.unep.org/pt-br/node/24836" target="_blank" rel="noopener">IPBES, Avaliação Global de Biodiversidade, 2019 (via PNUMA)</a></li>
+          <li><a href="https://iucn.org/index%2ephp/node/45130" target="_blank" rel="noopener">IUCN, atualização da Lista Vermelha, out. 2025</a></li>
+          <li><a href="https://www.fao.org/newsroom/detail/global-deforestation-slows--but-forests-remain-under-pressure--fao-report-shows/en" target="_blank" rel="noopener">FAO, Avaliação Global dos Recursos Florestais 2025</a></li>
+          <li><a href="https://www.infomoney.com.br/?p=3349212" target="_blank" rel="noopener">MapBiomas, RAD 2025 (via Agência Brasil)</a></li>
+          <li><a href="https://www.forbespt.com/?p=193523" target="_blank" rel="noopener">MapBiomas, cobertura nativa 1985 a 2025 (2026)</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="legal">
+      <span>Créditos: concepção, texto e ilustrações originais do projeto Raiz Viva, feitos em código.</span>
+      <span>Dados de terceiros pertencem às instituições citadas.</span>
+    </div>
+  </div>
+</footer>
+
+<button id="top" aria-label="Voltar ao topo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M6 11l6-6 6 6"/></svg></button>
+
+<script>
+document.documentElement.classList.add('js');
+/* ---------- scene system ---------- */
+let UID=0;
+const rng=s=>()=>{s|=0;s=s+0x6D2B79F5|0;let t=Math.imul(s^s>>>15,1|s);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296};
+const ry=(x,o)=>o.y+Math.sin(x*o.f+o.p)*o.a+Math.sin(x*o.f*2.3+o.p*1.7)*o.a*.45;
+const rp=o=>{let d='M0,900 L0,'+ry(0,o).toFixed(1);for(let x=20;x<=1600;x+=20)d+=' L'+x+','+ry(x,o).toFixed(1);return d+' L1600,900Z'};
+function trees(o,r){let s='';for(let i=0;i<o.n;i++){const x=r()*1600,y=ry(x,o),k=o.r*(.6+r()*.8);
+  if(o.kind==='pine')s+=`<polygon points="${x.toFixed(0)},${(y-k*3.2).toFixed(0)} ${(x-k).toFixed(0)},${(y+6).toFixed(0)} ${(x+k).toFixed(0)},${(y+6).toFixed(0)}" fill="${o.tc}"/>`;
+  else if(o.kind==='stump')s+=`<rect x="${(x-k*.5).toFixed(0)}" y="${(y-k*.5).toFixed(0)}" width="${k}" height="${k*.9}" rx="3" fill="${o.tc}"/><ellipse cx="${x.toFixed(0)}" cy="${(y-k*.5).toFixed(0)}" rx="${k*.5}" ry="${k*.14}" fill="#d9b98a"/>`;
+  else s+=`<rect x="${(x-2.5).toFixed(0)}" y="${(y-k*.6).toFixed(0)}" width="5" height="${(k*1.5).toFixed(0)}" fill="${o.trunk||'#3a2a1c'}"/><ellipse cx="${x.toFixed(0)}" cy="${(y-k*1.15).toFixed(0)}" rx="${(k*1.15).toFixed(0)}" ry="${k.toFixed(0)}" fill="${o.tc}"/><ellipse cx="${(x-k*.3).toFixed(0)}" cy="${(y-k*1.4).toFixed(0)}" rx="${(k*.6).toFixed(0)}" ry="${(k*.45).toFixed(0)}" fill="#fff" opacity=".07"/>`}
+  return s}
+function layer(o,seed){const r=rng(seed);return `<path d="${rp(o)}" fill="${o.c}"/>`+trees(o,r)}
+function scene(o,seed=1){const id='g'+(++UID);let s=`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${o.sky[0]}"/><stop offset="1" stop-color="${o.sky[1]}"/></linearGradient><radialGradient id="${id}s"><stop offset="0" stop-color="${o.sun?.c||'#fff'}" stop-opacity=".95"/><stop offset=".25" stop-color="${o.sun?.c||'#fff'}" stop-opacity=".35"/><stop offset="1" stop-color="${o.sun?.c||'#fff'}" stop-opacity="0"/></radialGradient></defs><rect width="1600" height="900" fill="url(#${id})"/>`;
+  if(o.sun)s+=`<circle cx="${o.sun.x}" cy="${o.sun.y}" r="${o.sun.r*4.5}" fill="url(#${id}s)"/><circle cx="${o.sun.x}" cy="${o.sun.y}" r="${o.sun.r}" fill="${o.sun.c}"/>`;
+  if(o.stars){const r=rng(9);for(let i=0;i<70;i++)s+=`<circle cx="${r()*1600|0}" cy="${r()*420|0}" r="${.6+r()*1.4}" fill="#fff" opacity="${.3+r()*.6}"/>`}
+  o.layers.forEach((l,i)=>s+=layer(l,seed*10+i));
+  return s+(o.extra||'')+'</svg>'}
+const L=(y,a,f,p,c,kind,n,r,tc,trunk)=>({y,a,f,p,c,kind,n,r,tc,trunk});
+const butterfly=(x,y,c,sc=1)=>`<g transform="translate(${x} ${y}) scale(${sc})"><ellipse cx="-10" cy="-4" rx="12" ry="9" fill="${c}" transform="rotate(-20 -10 -4)"/><ellipse cx="10" cy="-4" rx="12" ry="9" fill="${c}" transform="rotate(20 10 -4)"/><ellipse cx="-8" cy="8" rx="8" ry="6" fill="${c}" opacity=".85"/><ellipse cx="8" cy="8" rx="8" ry="6" fill="${c}" opacity=".85"/><rect x="-1.5" y="-8" width="3" height="20" rx="1.5" fill="#222"/></g>`;
+const fish=(x,y,c,sc=1,f=1)=>`<g transform="translate(${x} ${y}) scale(${sc*f} ${sc})"><ellipse rx="26" ry="11" fill="${c}"/><polygon points="22,0 42,-13 42,13" fill="${c}"/><circle cx="-14" cy="-3" r="2.4" fill="#fff"/></g>`;
+const bird=(x,y,sc=1,c='#122')=>`<path transform="translate(${x} ${y}) scale(${sc})" d="M-24 0q12-14 24 0q12-14 24 0" fill="none" stroke="${c}" stroke-width="4" stroke-linecap="round"/>`;
+const flame=(x,y,sc,c)=>`<path transform="translate(${x} ${y}) scale(${sc})" d="M0 0c-30-10-34-46-10-84-2 22 14 30 18 44 6-14 4-30 14-50 10 34 28 52 8 90z" fill="${c}"/>`;
+function rays(n,c,op){let s='';for(let i=0;i<n;i++){const x=200+i*(1200/n)+(i%2)*60;s+=`<polygon points="${x},0 ${x+90},0 ${x+30-i*8},900 ${x-120+i*8},900" fill="${c}" opacity="${op}"/>`}return s}
+
+const SC={
+ diversidade:()=>scene({sky:['#0f3b2e','#7fb96a'],sun:{x:1180,y:200,r:50,c:'#fff3b0'},layers:[
+   L(520,60,.004,1,'#2f7a52','round',40,26,'#2f7a52'),L(640,50,.005,3,'#1f6b44','round',34,38,'#1f6b44'),L(780,40,.006,5,'#124a30','round',26,56,'#124a30')],
+   extra:butterfly(420,330,'#f08a3c',1.6)+butterfly(760,250,'#4aa3d8',1.2)+butterfly(1010,420,'#e45a8f',1.4)+butterfly(260,520,'#f6d44c',1)+bird(1300,120,1.3,'#0b2a1c')+`<g fill="#e8452e"><ellipse cx="1090" cy="640" rx="46" ry="30"/><circle cx="1136" cy="626" r="18"/><path d="M1148 622q30 6 40 18-26 2-42-6z" fill="#f6c244"/><path d="M1050 650q-40 30-70 62 40-6 80-40z" fill="#2c7be5"/></g>`},3),
+ floresta:()=>scene({sky:['#0c2a1e','#5b8f5a'],sun:{x:800,y:80,r:40,c:'#ffeeb8'},layers:[
+   L(560,40,.004,1,'#2a6a46','round',44,30,'#2a6a46'),L(700,30,.005,4,'#17482f','round',30,48,'#17482f')],
+   extra:rays(7,'#fff2bd',.13)+(()=>{let s='';const r=rng(5);for(let i=0;i<14;i++){const x=40+i*118+r()*40,w=26+r()*30;s+=`<rect x="${x|0}" y="0" width="${w|0}" height="900" fill="#0d2217" opacity="${.55+r()*.4}"/>`}return s})()+`<rect y="760" width="1600" height="140" fill="#0a1a11"/>`},4),
+ oceano:()=>scene({sky:['#0a3552','#2aa3b5'],sun:{x:1250,y:120,r:44,c:'#fff7c9'},layers:[],
+   extra:(()=>{let s='<rect y="280" width="1600" height="620" fill="#0b6b86" opacity=".75"/><rect y="520" width="1600" height="380" fill="#054a63" opacity=".7"/>';for(let i=0;i<5;i++)s+=`<path d="M0 ${290+i*22} q100-20 200 0 t200 0 t200 0 t200 0 t200 0 t200 0 t200 0 t200 0 V900 H0Z" fill="#fff" opacity=".06"/>`;
+     s+=fish(420,520,'#ffb23e',1.3)+fish(520,560,'#ffb23e',1,1)+fish(1000,470,'#7be0d6',1.6,-1)+fish(1120,520,'#7be0d6',1,-1)+fish(760,680,'#f2f2f2',1.1);
+     const r=rng(8);for(let i=0;i<9;i++){const x=80+i*180+r()*60,h=90+r()*150;s+=`<path d="M${x} 900 q-18-${h*.5} 0-${h} q20 ${h*.35} 0 ${h}z" fill="${['#e0586e','#f08a3c','#c25fd1'][i%3]}"/><path d="M${x+30} 900 q-14-${h*.4} 4-${h*.8}" stroke="${['#e0586e','#f08a3c','#c25fd1'][(i+1)%3]}" stroke-width="12" fill="none" stroke-linecap="round"/>`}
+     return s+'<rect y="860" width="1600" height="40" fill="#e5cf9b" opacity=".55"/>'})()},6),
+ extincao:()=>scene({sky:['#2a1a3d','#e98a4f'],sun:{x:820,y:560,r:90,c:'#ffd27a'},stars:true,layers:[
+   L(660,28,.006,2,'#4a2c3f','pine',26,16,'#4a2c3f'),L(780,26,.007,6,'#1c1020','pine',16,24,'#1c1020')],
+   extra:(()=>{let s='';const r=rng(3);for(let i=0;i<22;i++){const x=120+r()*1360,y=700+r()*120;s+=`<circle cx="${x|0}" cy="${y|0}" r="${2+r()*3}" fill="#ffd27a" opacity="${.15+r()*.5}"/>`}
+     return s+`<g fill="#120a18"><ellipse cx="1180" cy="760" rx="60" ry="30"/><circle cx="1232" cy="738" r="18"/><rect x="1130" y="775" width="10" height="40"/><rect x="1215" y="775" width="10" height="40"/><path d="M1240 726l-8-28 14 10z"/><path d="M1224 726l-4-30 12 12z"/></g>`+bird(520,260,1.2,'#120a18')})()},7),
+ acao:()=>scene({sky:['#274f4a','#f4d78f'],sun:{x:800,y:560,r:70,c:'#fff3c4'},layers:[
+   L(640,40,.004,3,'#6f9e74','round',30,20,'#6f9e74'),L(760,34,.005,1,'#3d7a50','round',22,30,'#3d7a50'),L(840,10,.01,2,'#183a26','round',0,0,'#183a26')],
+   extra:`<g transform="translate(800 840)"><path d="M0 0V-110" stroke="#2c5b3a" stroke-width="8" stroke-linecap="round"/><path d="M0-70C-70-70-100-110-100-160 -50-160 0-130 0-70Z" fill="#5f9e63"/><path d="M0-90C60-90 94-125 96-176 44-176 0-148 0-90Z" fill="#78b377"/><ellipse cx="0" cy="8" rx="80" ry="12" fill="#2a1d12"/></g>`+bird(420,240,1.3,'#1d3a2a')+bird(1200,200,1,'#1d3a2a')+butterfly(1040,520,'#f08a3c',1.2)},9)
+};
+/* mini scenes for cards */
+const MS={
+ desmatamento:()=>scene({sky:['#a9cfd0','#f0e0b0'],sun:{x:1300,y:160,r:50,c:'#fff'},layers:[L(560,40,.005,1,'#4f8a58','round',14,26,'#4f8a58'),L(740,22,.006,4,'#8a6a46','stump',22,34,'#7a5a3a'),L(840,12,.01,2,'#5b4430','stump',10,60,'#6b4d33')],extra:`<g transform="translate(1180 700) rotate(-82)"><rect width="320" height="28" rx="6" fill="#6b4d33"/><ellipse cx="0" cy="14" rx="8" ry="14" fill="#d9b98a"/></g>`},11),
+ queimadas:()=>scene({sky:['#3b0f10','#e8662a'],sun:{x:800,y:380,r:120,c:'#ffb347'},layers:[L(560,30,.006,1,'#2a1210','pine',24,22,'#1d0c0a'),L(740,22,.007,3,'#140806','pine',20,30,'#140806')],extra:flame(300,820,1.8,'#ff8a2a')+flame(700,840,2.4,'#ffb347')+flame(1100,830,2,'#ff6a2a')+flame(1400,850,1.6,'#ffb347')+`<g fill="#3b1a14" opacity=".5"><ellipse cx="700" cy="210" rx="260" ry="70"/><ellipse cx="1000" cy="130" rx="300" ry="60"/></g>`},12),
+ poluicao:()=>scene({sky:['#6c7a7a','#b9c1b6'],layers:[L(520,28,.006,1,'#5f6f66','pine',18,22,'#55655c')],extra:(()=>{let s='<rect y="560" width="1600" height="340" fill="#4c7075"/><rect y="620" width="1600" height="280" fill="#3d5a5e"/>';
+   s+=`<g fill="#2d3a38" opacity=".8"><rect x="1180" y="300" width="60" height="260"/><rect x="1260" y="360" width="50" height="200"/></g><g fill="#8a948f" opacity=".7"><ellipse cx="1210" cy="260" rx="110" ry="50"/><ellipse cx="1330" cy="200" rx="120" ry="50"/></g>`;
+   const b=(x,y,r)=>`<g transform="translate(${x} ${y}) rotate(${r})"><rect x="-14" y="-36" width="28" height="64" rx="8" fill="#9bd4e8" opacity=".85"/><rect x="-6" y="-52" width="12" height="18" rx="3" fill="#f2f2f2"/></g>`;
+   return s+b(300,640,70)+b(620,700,-40)+b(920,660,110)+b(480,760,20)+`<g fill="#e8e0c0" opacity=".8"><rect x="1000" y="720" width="70" height="46" rx="6" transform="rotate(-12 1000 720)"/></g>`})()},13),
+ trafico:()=>scene({sky:['#173b2a','#6aa66a'],sun:{x:1280,y:140,r:36,c:'#fff3b0'},layers:[L(560,40,.005,1,'#2f7a52','round',30,28,'#2f7a52'),L(740,30,.006,3,'#124a30','round',20,46,'#124a30')],extra:`<g stroke="#2a2a2a" stroke-width="8" fill="none" opacity=".92"><path d="M500 140 H1100 M500 780 H1100"/><path d="M500 140 q300-120 600 0" /><path d="M${[560,640,720,800,880,960,1040].join(' 140V780 M')} 140V780"/></g><g transform="translate(800 520)"><ellipse rx="60" ry="46" fill="#e8452e"/><circle cx="52" cy="-30" r="24" fill="#e8452e"/><path d="M70 -30l36 8-34 10z" fill="#f6c244"/><circle cx="58" cy="-34" r="4" fill="#111"/><path d="M-50 20q-50 40-70 90 50-16 90-60z" fill="#2c7be5"/></g>`},14),
+ clima:()=>scene({sky:['#f5a33c','#ffe29a'],sun:{x:800,y:330,r:150,c:'#ff6a2a'},layers:[L(660,20,.004,2,'#c88a4a','round',0,0,'#c88a4a'),L(760,16,.006,5,'#a8693a','round',0,0,'#a8693a')],extra:(()=>{let s='<g stroke="#5b3320" stroke-width="5" fill="none" stroke-linecap="round" opacity=".7">';const r=rng(21);for(let i=0;i<16;i++){const x=r()*1600,y=780+r()*100;s+=`<path d="M${x|0} ${y|0} l${(r()*60-30)|0} ${(r()*30)|0} l${(r()*60-30)|0} ${(r()*24)|0}"/>`}return s+'</g><g stroke="#fff" stroke-width="6" opacity=".35"><path d="M300 560 q60-30 120 0 t120 0"/><path d="M1000 540 q60-30 120 0 t120 0"/></g>'})()},15),
+ extincao:()=>SC.extincao()
+};
+/* ---------- hero layers ---------- */
+(function(){
+  const svg=(inner,extra='')=>`<svg viewBox="0 0 1600 900" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">${inner}</svg>`;
+  const sunG=`<defs><radialGradient id="hs"><stop offset="0" stop-color="#fff3c4" stop-opacity=".95"/><stop offset=".3" stop-color="#ffd98a" stop-opacity=".4"/><stop offset="1" stop-color="#ffd98a" stop-opacity="0"/></radialGradient></defs><circle cx="1180" cy="430" r="420" fill="url(#hs)"/><circle cx="1180" cy="430" r="70" fill="#fff6d0"/>`;
+  document.getElementById('hl0').innerHTML=svg(sunG+rays(6,'#fff0b8',.09));
+  document.getElementById('hl1').innerHTML=svg(layer(L(560,50,.004,1,'#7fa58f','pine',46,20,'#7fa58f'),21)+`<rect y="560" width="1600" height="340" fill="#7fa58f" opacity=".0"/>`);
+  document.getElementById('hl2').innerHTML=svg(layer(L(660,44,.005,3,'#3f7a55','round',42,32,'#3f7a55'),22)+layer(L(760,38,.006,5,'#245a3a','round',32,46,'#245a3a'),23));
+  document.getElementById('hl3').innerHTML=svg(layer(L(840,24,.007,2,'#12351f','round',18,70,'#12351f'),24)+layer(L(900,10,.01,4,'#0a2013','round',8,110,'#0a2013'),25));
+})();
+
+/* ---------- slides ---------- */
+const SLIDES=[
+ ['diversidade','Diversidade de vida','Milhões de formas de existir','Estima-se que existam cerca de 8 milhões de espécies de animais e plantas. Cada uma tem seu papel: polinizar, decompor, dispersar, equilibrar.'],
+ ['floresta','As florestas','Pulmões, caixas-d’água e lar','Florestas cobrem 4,14 bilhões de hectares, um terço das terras do planeta. Guardam carbono, regulam as chuvas e abrigam a maior parte das espécies terrestres.'],
+ ['oceano','Os oceanos','Um mundo que ainda mal conhecemos','Recifes de coral ocupam uma fração mínima do mar e sustentam uma enorme variedade de vida. Quase um terço dos corais construtores de recife está ameaçado.'],
+ ['extincao','O risco da extinção','Quando uma espécie se apaga, não volta','Cerca de 1 milhão de espécies estão ameaçadas, muitas delas em poucas décadas. A boa notícia: a maior parte dessa perda ainda pode ser evitada.'],
+ ['acao','A força da ação humana','Cuidar é uma decisão que se multiplica','Populações de gorila-da-montanha e de bisão-europeu voltaram a crescer graças a proteção e restauração. O que fazemos juntos funciona.']
+];
+(function(){
+  const car=document.getElementById('car'),dots=document.getElementById('dots');
+  SLIDES.forEach((s,i)=>{
+    const d=document.createElement('div');d.className='sl';
+    d.innerHTML=SC[s[0]]()+`<div class="txt"><div class="wrap"><div class="in"><span class="k">${s[1]}</span><h3>${s[2]}</h3><p>${s[3]}</p></div></div></div>`;
+    car.insertBefore(d,car.firstChild);
+    const b=document.createElement('button');b.setAttribute('aria-label','Ir para o slide '+(i+1));b.onclick=()=>go(i,true);dots.appendChild(b);
+  });
+  const sl=[...car.querySelectorAll('.sl')].reverse();let cur=-1,t;
+  function go(i,manual){
+    i=(i+sl.length)%sl.length;
+    sl.forEach((s,k)=>s.classList.toggle('on',k===i));
+    [...dots.children].forEach((b,k)=>{b.classList.remove('on');if(k===i){void b.offsetWidth;b.classList.add('on')}});
+    document.getElementById('cnt').textContent=String(i+1).padStart(2,'0');
+    cur=i;clearTimeout(t);t=setTimeout(()=>go(cur+1),7000);
+  }
+  document.getElementById('prev').onclick=()=>go(cur-1);
+  document.getElementById('next').onclick=()=>go(cur+1);
+  car.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')go(cur-1);if(e.key==='ArrowRight')go(cur+1)});
+  let x0=null;car.addEventListener('touchstart',e=>x0=e.touches[0].clientX,{passive:true});
+  car.addEventListener('touchend',e=>{if(x0===null)return;const dx=e.changedTouches[0].clientX-x0;if(Math.abs(dx)>50)go(cur+(dx<0?1:-1));x0=null});
+  go(0);
+  if(matchMedia('(prefers-reduced-motion:reduce)').matches)clearTimeout(t);
+})();
+
+/* ---------- web of life ---------- */
+(function(){
+  const N={arv:['Árvores',260,60],fun:['Fungos',70,150],ins:['Insetos',450,150],ave:['Aves',450,300],mam:['Mamíferos',70,300],rio:['Rios',150,395],pes:['Pessoas',370,395]};
+  const E=[
+   ['fun','arv','Os fungos do solo trocam nutrientes e água com as raízes das árvores.'],
+   ['ins','arv','Insetos polinizam flores e fazem as árvores darem frutos.'],
+   ['ave','arv','As aves espalham sementes e ajudam a floresta a se renovar.'],
+   ['ave','ins','Muitas aves se alimentam de insetos e controlam suas populações.'],
+   ['mam','arv','Mamíferos comem frutos e levam sementes para longe da árvore-mãe.'],
+   ['rio','arv','As raízes seguram as margens e protegem as nascentes dos rios.'],
+   ['rio','mam','Os rios dão água e alimento para os animais.'],
+   ['pes','rio','Pessoas dependem dos rios para beber, cozinhar e produzir alimento.'],
+   ['pes','ins','Insetos polinizadores ajudam a produzir boa parte do que comemos.'],
+   ['pes','arv','As árvores limpam o ar, dão sombra e ajudam a regular o clima.']
+  ];
+  const svg=document.getElementById('netsvg'),info=document.getElementById('netinfo');
+  let s='';E.forEach((e,i)=>s+=`<line id="e${i}" x1="${N[e[0]][1]}" y1="${N[e[0]][2]}" x2="${N[e[1]][1]}" y2="${N[e[1]][2]}"/>`);
+  Object.keys(N).forEach(k=>{const[n,x,y]=N[k];s+=`<g class="node" id="n${k}" tabindex="0" role="button" aria-label="${n}"><circle cx="${x}" cy="${y}" r="36" fill="${k==='pes'?'#b4673a':'#3f7a55'}"/><text x="${x}" y="${y+5}" text-anchor="middle">${n}</text></g>`});
+  svg.innerHTML=s;
+  function show(k){
+    document.querySelectorAll('.net .node').forEach(g=>g.classList.toggle('hot',g.id==='n'+k));
+    const rel=[];E.forEach((e,i)=>{const h=e[0]===k||e[1]===k;document.getElementById('e'+i).classList.toggle('hot',h);if(h)rel.push(e[2])});
+    info.innerHTML=`<b>${N[k][0]}</b><ul>${rel.map(r=>`<li>${r}</li>`).join('')}</ul>`;
+  }
+  Object.keys(N).forEach(k=>{const g=document.getElementById('n'+k);['mouseenter','click','focus'].forEach(ev=>g.addEventListener(ev,()=>show(k)))});
+  show('arv');
+})();
+
+/* ---------- threats ---------- */
+const IC={
+ stump:'<path d="M5 10c0-2 14-2 14 0v8c0 2-14 2-14 0z"/><path d="M5 10c0 2 14 2 14 0"/><path d="M10 14h4"/>',
+ flame:'<path d="M12 2c1 4 5 6 5 11a5 5 0 0 1-10 0c0-2 1-3 2-4 0 2 1 3 2 3 0-4-1-6 1-10z"/>',
+ bottle:'<path d="M9 3h6v3l2 3v11a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V9l2-3z"/><path d="M7 13h10"/>',
+ cage:'<path d="M5 20V9a7 7 0 0 1 14 0v11"/><path d="M9 20V3M15 20V3M3 20h18"/>',
+ therm:'<path d="M10 14V5a2 2 0 0 1 4 0v9a4 4 0 1 1-4 0z"/><path d="M12 9v7"/>',
+ warn:'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17v.01"/>',
+ tree:'<circle cx="12" cy="9" r="6"/><path d="M12 15v7M12 18l-3-2M12 18l3-3"/>',
+ drop:'<path d="M12 3s-7 8-7 12a7 7 0 0 0 14 0c0-4-7-12-7-12z"/>',
+ waste:'<path d="M4 7h16M9 7V4h6v3M6 7l1 14h10l1-14"/><path d="M10 11v6M14 11v6"/>',
+ trash:'<path d="M3 12a9 9 0 0 1 15-6.7M21 12a9 9 0 0 1-15 6.7"/><path d="M18 2v4h-4M6 22v-4h4"/>',
+ paw:'<circle cx="7" cy="9" r="2"/><circle cx="12" cy="6" r="2"/><circle cx="17" cy="9" r="2"/><path d="M8 17c0-3 2-5 4-5s4 2 4 5c0 2-2 2-4 1-2 1-4 1-4-1z"/>',
+ leaf:'<path d="M5 19C5 10 11 5 20 4c0 9-5 15-13 15"/><path d="M5 19l8-8"/>',
+ cart:'<path d="M3 4h3l2.5 11h10L21 7H7"/><circle cx="9" cy="20" r="1"/><circle cx="17" cy="20" r="1"/>'
+};
+const ico=k=>`<svg viewBox="0 0 24 24" aria-hidden="true">${IC[k]}</svg>`;
+const TH=[
+ ['desmatamento','stump','Desmatamento','Quando a floresta cai, somem o abrigo, o alimento e o caminho de milhares de espécies. A principal causa é a mudança no uso da terra, sobretudo para agropecuária.','984.794 ha de vegetação nativa desmatados no Brasil em 2025 (MapBiomas).'],
+ ['queimadas','flame','Queimadas','O fogo avança sobre matas, campos e pântanos, mata animais que não conseguem fugir e deixa o solo exposto. Em muitos casos é provocado por pessoas.','Incêndios atingem cerca de 127 milhões de hectares de floresta por ano no mundo (FAO, 2025).'],
+ ['poluicao','bottle','Poluição','Plástico, esgoto, agrotóxicos e resíduos industriais contaminam rios e mares. Peixes, aves e tartarugas confundem lixo com comida.','O plástico no ambiente aumentou dez vezes desde 1980 (IPBES, 2019).'],
+ ['trafico','cage','Tráfico de animais silvestres','Retirar um animal da natureza rompe uma cadeia inteira. Muitos morrem na captura e no transporte, e os que sobrevivem não voltam a viver livres.','A exploração direta de organismos é a 2ª maior causa de perda de natureza no mundo (IPBES, 2019).'],
+ ['clima','therm','Mudanças climáticas','Calor, secas e eventos extremos mudam os lugares onde as espécies conseguem viver. Recifes de coral branqueiam e rios secam.','Na América Latina e no Caribe, as populações monitoradas caíram 95% desde 1970 (WWF, 2024).'],
+ ['extincao','warn','Extinção de espécies','Todas essas pressões somadas empurram espécies para o ponto sem volta. Perder uma é perder uma história de milhões de anos.','48.646 espécies ameaçadas na Lista Vermelha da IUCN (out. 2025).']
+];
+document.getElementById('cards').innerHTML=TH.map((t,i)=>`<article class="card rv" style="--d:${(i%3)*.12}s" tabindex="0"><div class="pic">${MS[t[0]]()}<span class="ic">${ico(t[1])}</span></div><div class="bd"><h3>${t[2]}</h3><p>${t[3]}</p><div class="stat">${t[4]}</div></div></article>`).join('');
+
+/* ---------- tips ---------- */
+const TP=[
+ ['tree','Plantar árvores','Escolha espécies nativas da sua região. Uma árvore abriga ninhos, dá sombra e fixa o solo.','Plantar árvores nativas devolve casa a quem vive por perto.'],
+ ['drop','Economizar água','Feche a torneira ao escovar os dentes, conserte vazamentos e reaproveite a água da chuva.','Cada gota poupada fica no rio, e o rio é lar de muita gente.'],
+ ['waste','Evitar o desperdício','Planeje as compras, aproveite sobras e recuse o que for descartável sem necessidade.','Menos desperdício é menos terra aberta para produzir o que vai ao lixo.'],
+ ['trash','Não jogar lixo na natureza','Leve seu lixo de volta, separe os recicláveis e recolha o que encontrar nas trilhas.','Nada de plástico no caminho dos bichos.'],
+ ['paw','Proteger os animais','Não compre nem alimente animais silvestres e denuncie caça e tráfico aos órgãos ambientais.','Bicho silvestre bom é bicho livre.'],
+ ['leaf','Valorizar áreas verdes','Visite parques, apoie unidades de conservação e cuide das praças do seu bairro.','Quem conhece, protege. Quem protege, ensina.'],
+ ['cart','Consumir de maneira consciente','Prefira produtos locais, de origem conhecida e feitos com respeito à floresta.','Sua compra é um voto no tipo de mundo que você quer.']
+];
+(function(){
+  const box=document.getElementById('tips'),tree=document.getElementById('ptree'),pt=document.getElementById('pt'),pp=document.getElementById('pp');
+  const sel=new Set();
+  const titles=['Plante a primeira decisão','Uma semente germinou','Já dá para ver as folhas','Uma muda forte','Sua árvore ganhou copa','Quase uma floresta','Falta só um gesto','Uma floresta viva'];
+  box.innerHTML=TP.map((t,i)=>`<button class="tip rv" style="--d:${(i%4)*.08}s" aria-pressed="false" data-i="${i}"><span class="chk"></span>${ico(t[0])}<h3>${t[1]}</h3><p>${t[2]}</p></button>`).join('');
+  box.querySelectorAll('.tip').forEach(b=>b.addEventListener('click',()=>{
+    const i=+b.dataset.i,on=!sel.has(i);on?sel.add(i):sel.delete(i);b.setAttribute('aria-pressed',on);
+    const n=sel.size;tree.style.transform=`scale(${.18+n*.82/7})`;pt.textContent=titles[n];
+    pp.textContent=n===0?'Escolha um gesto acima. Mesmo um já faz diferença quando muita gente faz junto.':n===7?'Você assumiu os sete compromissos. Agora, convide mais alguém para plantar essa floresta com você.':n+(n>1?' compromissos assumidos. ':' compromisso assumido. ')+TP[i][3];
+  }));
+})();
+
+/* ---------- quote background ---------- */
+document.getElementById('qbg').innerHTML=scene({sky:['#141a3a','#c8734a'],stars:true,sun:{x:800,y:560,r:70,c:'#ffd9a0'},layers:[L(620,36,.005,2,'#3a2a44','pine',30,18,'#3a2a44'),L(740,30,.006,5,'#1b1a2c','pine',22,26,'#1b1a2c'),L(860,16,.008,1,'#0b1018','pine',14,40,'#0b1018')],extra:bird(400,300,1.2,'#0b1018')+bird(1180,240,1,'#0b1018')},31);
+
+/* ---------- behaviour ---------- */
+const nav=document.getElementById('nav'),prog=document.getElementById('progress'),topb=document.getElementById('top'),hero=document.querySelector('.hero');
+const layers=[...document.querySelectorAll('.hero .layer')],qbg=document.getElementById('qbg'),quote=document.getElementById('mensagem');
+const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+let tick=false;
+function onScroll(){
+  const y=scrollY,h=document.documentElement.scrollHeight-innerHeight;
+  prog.style.transform=`scaleX(${h>0?y/h:0})`;
+  nav.classList.toggle('solid',y>60);topb.classList.toggle('show',y>700);
+  if(!reduce){
+    if(y<innerHeight*1.2)layers.forEach(l=>l.style.transform=`translate3d(0,${y*l.dataset.s}px,0)`);
+    const r=quote.getBoundingClientRect();if(r.top<innerHeight&&r.bottom>0)qbg.style.transform=`translate3d(0,${(-r.top)*.12}px,0)`;
+  }
+  tick=false;
+}
+addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(onScroll)}},{passive:true});onScroll();
+topb.onclick=()=>scrollTo({top:0,behavior:reduce?'auto':'smooth'});
+const burger=document.getElementById('burger');
+burger.onclick=()=>{const o=nav.classList.toggle('open');burger.setAttribute('aria-expanded',o)};
+document.querySelectorAll('#links a').forEach(a=>a.addEventListener('click',()=>{nav.classList.remove('open');burger.setAttribute('aria-expanded','false')}));
+/* active link */
+const secs=['inicio','biodiversidade','ameacas','ajudar','dados','mensagem'].map(id=>document.getElementById(id));
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.querySelectorAll('#links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'}).observe&&secs.forEach(s=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.querySelectorAll('#links a').forEach(a=>a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id))}),{rootMargin:'-45% 0px -50% 0px'}).observe(s));
+/* reveal + counters + bars */
+const fmt=(n,sep)=>sep?Math.round(n).toLocaleString('pt-BR'):String(Math.round(n));
+function count(el){const to=+el.dataset.count,sep=el.dataset.sep,d=900+Math.random()*0,t0=performance.now();
+  if(reduce){el.textContent=fmt(to,sep);return}
+  (function f(t){const p=Math.min(1,(t-t0)/1600),e=1-Math.pow(1-p,3);el.textContent=fmt(to*e,sep);if(p<1)requestAnimationFrame(f)})(t0)}
+function bars(root){root.querySelectorAll('.fl').forEach(f=>{const max=+(f.dataset.max||f.closest('.bars').dataset.max||100);f.style.width=Math.max(8,f.dataset.w/max*100)+'%'})}
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(!e.isIntersecting)return;const el=e.target;el.classList.add('in');
+  el.querySelectorAll('[data-count]').forEach(count);if(el.querySelector('.bars'))bars(el);io.unobserve(el)}),{threshold:.15});
+document.querySelectorAll('.rv').forEach(el=>io.observe(el));
+/* safety: never leave content hidden */
+setTimeout(()=>document.querySelectorAll('.rv:not(.in)').forEach(el=>{const r=el.getBoundingClientRect();if(r.top<innerHeight)el.classList.add('in')}),1800);
+</script>
